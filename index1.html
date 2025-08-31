@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Async Data Load Example</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  table {
+    width: 60%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  th {
+    background-color: #f4f4f4;
+  }
+</style>
+</head>
+<body>
+<h1>User Data</h1>
+<table id="userTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Date of Birth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Data rows will be inserted here -->
+  </tbody>
+</table>
+
+<script type="module">
+// Asynchronously load user data from the external module
+async function loadUserData() {
+  const module = await import('./data.js');
+  const users = module.default;
+
+  const tbody = document.querySelector('#userTable tbody');
+  users.forEach(user => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${user.name}</td>
+      <td>${user.sex}</td>
+      <td>${user.dob}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Call the async function
+loadUserData();
+</script>
+</body>
+</html>

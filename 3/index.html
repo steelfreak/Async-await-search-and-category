@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Async External JS Module with Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 300px;
+      font-size: 1rem;
+    }
+    table {
+      width: 60%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h1>User Data</h1>
+
+  <input id="searchInput" type="text" placeholder="Search names..." />
+
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Sex</th>
+        <th>Date of Birth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data rows inserted here -->
+    </tbody>
+  </table>
+
+  <script type="module" src="./main.js"></script>
+  <script type="module">
+    import { searchUsersByName } from './main.js';
+
+    const searchInput = document.getElementById('searchInput');
+    const tbody = document.querySelector('#userTable tbody');
+
+    searchInput.addEventListener('input', async () => {
+      const query = searchInput.value.trim();
+      if (!query) {
+        // If search is empty, reload all data
+        const module = await import('./main.js');
+        await module.loadUserData();
+        return;
+      }
+
+      const results = await searchUsersByName(query);
+      tbody.innerHTML = ''; // Clear previous results
+
+      results.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.sex}</td>
+          <td>${user.dob}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Async External JS Module with Search and Filter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input[type="text"], select {
+      padding: 8px;
+      margin-right: 10px;
+      font-size: 1rem;
+    }
+    table {
+      width: 60%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h1>User Data</h1>
+
+  <input id="searchInput" type="text" placeholder="Search names..." />
+  <select id="sexFilter">
+    <option value="All">All</option>
+    <option value="Female">Female</option>
+    <option value="Male">Male</option>
+  </select>
+
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Sex</th>
+        <th>Date of Birth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data rows inserted here -->
+    </tbody>
+  </table>
+
+  <script type="module" src="./main.js"></script>
+  <script type="module">
+    import { searchUsersByName, filterUsersBySex, loadUserData } from './main.js';
+
+    const searchInput = document.getElementById('searchInput');
+    const sexFilter = document.getElementById('sexFilter');
+    const tbody = document.querySelector('#userTable tbody');
+
+    async function updateTable() {
+      const nameQuery = searchInput.value.trim();
+      const sexCategory = sexFilter.value;
+
+      // First filter by sex asynchronously
+      let filteredUsers = await filterUsersBySex(sexCategory);
+
+      // Then filter the filtered result by name query (case-insensitive substring match)
+      if (nameQuery) {
+        filteredUsers = filteredUsers.filter(user =>
+          user.name.toLowerCase().includes(nameQuery.toLowerCase())
+        );
+      }
+
+      // Update the table
+      tbody.innerHTML = '';
+      filteredUsers.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.sex}</td>
+          <td>${user.dob}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Event listeners for both inputs
+    searchInput.addEventListener('input', updateTable);
+    sexFilter.addEventListener('change', updateTable);
+
+    // Load initial data on page load
+    loadUserData();
+  </script>
+</body>
+</html>

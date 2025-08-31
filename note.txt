@@ -1,0 +1,9 @@
+i want the js code in html to be in a separate file
+
+
+cd path/to/your/project-folder
+python -m http.server
+python3 -m http.server
+
+http://localhost:8000
+python -m http.server 8080
