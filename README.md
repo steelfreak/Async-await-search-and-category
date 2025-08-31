@@ -136,7 +136,7 @@ The code structure promotes modularity, maintainability, and smooth UI responsiv
 ## Contributing
 
 Contributions, issues, and feature requests are welcome!  
-Feel free to check the [issues page](../issues).
+Feel free to check the [issues page](https://github.com/steelfreak/Async-await-search-and-category/issues).
 
 ***
 
